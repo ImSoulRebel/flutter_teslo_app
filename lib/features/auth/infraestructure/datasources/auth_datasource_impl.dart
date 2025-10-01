@@ -1,8 +1,11 @@
+import 'package:flutter/foundation.dart';
+import 'package:teslo_shop/config/config.dart';
 import 'package:teslo_shop/features/auth/domain/domain.dart';
+import 'package:teslo_shop/features/auth/infraestructure/mappers/mappers.dart';
+import 'package:teslo_shop/shared/infrastructure/simple_adapters.dart';
 
 class AuthDatasourceImpl extends AuthDatasource {
-
-
+  final httpAdapter = DioAdapter(baseUrl: Environment.apiUrl);
 
   @override
   Future<UserEntity> checkAuthStatus(String token) {
@@ -11,9 +14,19 @@ class AuthDatasourceImpl extends AuthDatasource {
   }
 
   @override
-  Future<UserEntity> login(String username, String password) {
-    // TODO: implement login
-    throw UnimplementedError();
+  Future<UserEntity> login(String username, String password) async {
+    try {
+      final response = await httpAdapter.post('/auth/login', {
+        'email': username,
+        'password': password,
+      });
+
+      final user = UserMapper.userEntityFromMap(response);
+      return user;
+    } catch (e) {
+      debugPrint(e.toString());
+      throw Exception('Error en login: $e');
+    }
   }
 
   @override
