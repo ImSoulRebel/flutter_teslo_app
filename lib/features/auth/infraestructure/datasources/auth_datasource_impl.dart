@@ -24,14 +24,17 @@ class AuthDatasourceImpl extends AuthDatasource {
 
       final user = UserMapper.userEntityFromMap(response);
       return user;
-    } catch (e) {
+    } on WrongCredentials catch (e) {
       debugPrint('AuthDatasourceImpl error: ${e.toString()}');
       // Si ya es una WrongCredentials (del DioAdapter), la re-lanzamos
-      if (e is WrongCredentials) rethrow;
-
-      // Para otros tipos de errores, los envolvemos
-      throw WrongCredentials(
-          message: 'Error en autenticación: ${e.toString()}');
+      rethrow;
+    } on ConnectionTimeout catch (e) {
+      debugPrint('AuthDatasourceImpl error: ${e.toString()}');
+      rethrow;
+    } catch (e) {
+      debugPrint('AuthDatasourceImpl error: ${e.toString()}');
+      // Para otros errores, los envolvemos en WrongCredentials
+      throw WrongCredentials(message: 'Error de autenticación');
     }
   }
 

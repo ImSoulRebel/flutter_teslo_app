@@ -46,6 +46,8 @@ class AuthNotifier extends Notifier<AuthState> {
       _setLoggedUser(user);
     } on WrongCredentials catch (e) {
       logout(e.message);
+    } on ConnectionTimeout catch (e) {
+      logout(e.message);
     } catch (e) {
       logout("Error inesperado durante el login");
     }
@@ -70,7 +72,7 @@ class AuthNotifier extends Notifier<AuthState> {
   Future<void> logout(String? errorMessage) async {
     await _tic();
     await authUseCases.logout();
-    state.copyWith(
+    state = state.copyWith(
       status: AuthStatus.notAuthenticated,
       errorMessage: errorMessage,
       user: null,

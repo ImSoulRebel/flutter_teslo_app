@@ -20,12 +20,15 @@ class LoginUseCase {
   Future<UserEntity> execute(String email, String password) async {
     try {
       return await repository.login(email, password);
+    } on WrongCredentials catch (e) {
+      debugPrint(e.toString());
+      // Si ya es una WrongCredentials, la re-lanzamos sin modificar
+      rethrow;
+    } on ConnectionTimeout catch (e) {
+      debugPrint(e.toString());
+      rethrow;
     } catch (e) {
       debugPrint(e.toString());
-
-      // Si ya es una WrongCredentials, la re-lanzamos sin modificar
-      if (e is WrongCredentials) rethrow;
-
       // Para otros errores, los envolvemos en WrongCredentials
       throw WrongCredentials(
           message: "Error de autenticación: ${e.toString()}");
