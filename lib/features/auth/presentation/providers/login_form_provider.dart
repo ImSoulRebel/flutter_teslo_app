@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/legacy.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
+import 'package:teslo_shop/features/auth/providers/providers.dart';
 import 'package:teslo_shop/features/shared/infrastructure/inputs/inputs.dart';
 
 //! 1 - State del provider
@@ -47,8 +48,13 @@ class LoginFormState {
 }
 
 //! 2 - Como implementamos un notifier
-class LoginFormNotifier extends StateNotifier<LoginFormState> {
-  LoginFormNotifier() : super(LoginFormState());
+class LoginFormNotifier extends Notifier<LoginFormState> {
+  late Future<void> Function(String, String) loginCallback;
+  @override
+  LoginFormState build() {
+    loginCallback = ref.watch(authProvider.notifier).login;
+    return LoginFormState();
+  }
 
   void emailChanged(String value) {
     final email = EmailInput.dirty(value);
@@ -66,7 +72,7 @@ class LoginFormNotifier extends StateNotifier<LoginFormState> {
     );
   }
 
-  void formSubmitted() {
+  Future<void> formSubmitted() async {
     final email = EmailInput.dirty(state.email.value);
     final password = PasswordInput.dirty(state.password.value);
     state = state.copyWith(
@@ -84,6 +90,8 @@ class LoginFormNotifier extends StateNotifier<LoginFormState> {
       Password: ${state.password.value}
       state: ${state.toString()}
     ''');
+
+    await loginCallback(state.email.value, state.password.value);
   }
 
   void formPosted() {
@@ -101,5 +109,5 @@ class LoginFormNotifier extends StateNotifier<LoginFormState> {
 
 //! 3 - StateNotifierProvider para exponer el provider
 final loginFormProvider =
-    StateNotifierProvider.autoDispose<LoginFormNotifier, LoginFormState>(
-        (ref) => LoginFormNotifier());
+    NotifierProvider.autoDispose<LoginFormNotifier, LoginFormState>(
+        () => LoginFormNotifier());

@@ -1,3 +1,6 @@
+import 'package:flutter/foundation.dart';
+import 'package:teslo_shop/features/auth/infraestructure/errors/errors.dart';
+
 import '../entities/entities.dart';
 import '../repositories/repositories.dart';
 
@@ -18,7 +21,14 @@ class LoginUseCase {
     try {
       return await repository.login(email, password);
     } catch (e) {
-      throw Exception('Error durante el login: ${e.toString()}');
+      debugPrint(e.toString());
+
+      // Si ya es una WrongCredentials, la re-lanzamos sin modificar
+      if (e is WrongCredentials) rethrow;
+
+      // Para otros errores, los envolvemos en WrongCredentials
+      throw WrongCredentials(
+          message: "Error de autenticación: ${e.toString()}");
     }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:teslo_shop/features/auth/domain/domain.dart';
+import 'package:teslo_shop/features/auth/infraestructure/errors/errors.dart';
 
 import 'auth_usecases_provider.dart';
 
@@ -38,24 +39,60 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   Future<void> login(String username, String password) async {
-    final user = await authUseCases.login(username, password);
-    state = state.copyWith(user: user, status: AuthStatus.authenticated);
+    await _tic();
+
+    try {
+      final user = await authUseCases.login(username, password);
+      _setLoggedUser(user);
+    } on WrongCredentials catch (e) {
+      logout(e.message);
+    } catch (e) {
+      logout("Error inesperado durante el login");
+    }
   }
 
   Future<void> register(String username, String password, String email) async {
-    final user = await authUseCases.register(username, password, email);
-    state = state.copyWith(user: user, status: AuthStatus.authenticated);
+    final user = await authUseCases.register(
+      username,
+      password,
+      email,
+    );
+    _setLoggedUser(user);
   }
 
   Future<void> checkStatus() async {
-    await Future.delayed(const Duration(seconds: 2));
-    state = state.copyWith(status: AuthStatus.notAuthenticated);
+    await _tic();
+    state = state.copyWith(
+      status: AuthStatus.notAuthenticated,
+    );
   }
+
+  Future<void> logout(String? errorMessage) async {
+    await _tic();
+    await authUseCases.logout();
+    state.copyWith(
+      status: AuthStatus.notAuthenticated,
+      errorMessage: errorMessage,
+      user: null,
+    );
+  }
+
+  void _setLoggedUser(UserEntity user) {
+    state = state.copyWith(
+      user: user,
+      status: AuthStatus.authenticated,
+      errorMessage: '',
+    );
+  }
+
+  Future<void> _tic() => Future.delayed(const Duration(milliseconds: 500));
 }
 
 final authProvider = NotifierProvider<AuthNotifier, AuthState>(() {
   return AuthNotifier();
 });
+
+
 
 
 
