@@ -9,9 +9,26 @@ class AuthDatasourceImpl extends AuthDatasource {
   final httpAdapter = DioAdapter(baseUrl: Environment.apiUrl);
 
   @override
-  Future<UserEntity> checkAuthStatus(String token) {
-    // TODO: implement checkAuthStatus
-    throw UnimplementedError();
+  Future<UserEntity> checkAuthStatus(String token) async {
+    try {
+      final response = await httpAdapter.get('/auth/check-status', headers: {
+        'Authorization': 'Bearer $token',
+      });
+
+      final user = UserMapper.userEntityFromMap(response);
+      return user;
+    } on WrongCredentials catch (e) {
+      debugPrint('AuthDatasourceImpl checkAuthStatus error: ${e.toString()}');
+      // Si ya es una WrongCredentials (del DioAdapter), la re-lanzamos
+      rethrow;
+    } on ConnectionTimeout catch (e) {
+      debugPrint('AuthDatasourceImpl checkAuthStatus error: ${e.toString()}');
+      rethrow;
+    } catch (e) {
+      debugPrint('AuthDatasourceImpl checkAuthStatus error: ${e.toString()}');
+      // Para otros errores, los envolvemos en WrongCredentials
+      throw WrongCredentials(message: 'Error de autenticación');
+    }
   }
 
   @override
@@ -25,14 +42,14 @@ class AuthDatasourceImpl extends AuthDatasource {
       final user = UserMapper.userEntityFromMap(response);
       return user;
     } on WrongCredentials catch (e) {
-      debugPrint('AuthDatasourceImpl error: ${e.toString()}');
+      debugPrint('AuthDatasourceImpl login error: ${e.toString()}');
       // Si ya es una WrongCredentials (del DioAdapter), la re-lanzamos
       rethrow;
     } on ConnectionTimeout catch (e) {
-      debugPrint('AuthDatasourceImpl error: ${e.toString()}');
+      debugPrint('AuthDatasourceImpl login error: ${e.toString()}');
       rethrow;
     } catch (e) {
-      debugPrint('AuthDatasourceImpl error: ${e.toString()}');
+      debugPrint('AuthDatasourceImpl login error: ${e.toString()}');
       // Para otros errores, los envolvemos en WrongCredentials
       throw WrongCredentials(message: 'Error de autenticación');
     }

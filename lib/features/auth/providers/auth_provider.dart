@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:teslo_shop/features/auth/domain/domain.dart';
 import 'package:teslo_shop/features/auth/infraestructure/errors/errors.dart';
+import 'package:teslo_shop/shared/infrastructure/simple_adapters.dart';
 
 import 'auth_usecases_provider.dart';
 
@@ -31,10 +33,12 @@ class AuthState {
 
 class AuthNotifier extends Notifier<AuthState> {
   late AuthUseCases authUseCases;
+  final StorageAdapter storageAdapter = SharedPreferencesStorageAdapter();
 
   @override
   AuthState build() {
     authUseCases = ref.read(authUseCasesProvider);
+    checkStatus();
     return AuthState();
   }
 
@@ -49,6 +53,7 @@ class AuthNotifier extends Notifier<AuthState> {
     } on ConnectionTimeout catch (e) {
       logout(e.message);
     } catch (e) {
+      debugPrint("Login: ${e.toString()}");
       logout("Error inesperado durante el login");
     }
   }
@@ -64,13 +69,20 @@ class AuthNotifier extends Notifier<AuthState> {
 
   Future<void> checkStatus() async {
     await _tic();
-    state = state.copyWith(
-      status: AuthStatus.notAuthenticated,
-    );
+    final token = await storageAdapter.getToken();
+    if (token == null) return logout();
+    try {
+      final user = await authUseCases.checkAuthStatus(token);
+      _setLoggedUser(user);
+    } catch (e) {
+      debugPrint("Token: ${e.toString()}");
+      logout();
+    }
   }
 
-  Future<void> logout(String? errorMessage) async {
+  Future<void> logout([String? errorMessage]) async {
     await _tic();
+    await storageAdapter.removeToken();
     await authUseCases.logout();
     state = state.copyWith(
       status: AuthStatus.notAuthenticated,
@@ -79,7 +91,9 @@ class AuthNotifier extends Notifier<AuthState> {
     );
   }
 
-  void _setLoggedUser(UserEntity user) {
+  Future<void> _setLoggedUser(UserEntity user) async {
+    await storageAdapter.saveToken(user.token);
+
     state = state.copyWith(
       user: user,
       status: AuthStatus.authenticated,
