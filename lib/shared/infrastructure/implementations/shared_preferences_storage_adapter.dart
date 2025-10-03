@@ -18,26 +18,57 @@ class SharedPreferencesStorageAdapter implements StorageAdapter {
   }
 
   @override
-  Future<void> removeToken() async {
+  Future<bool> removeToken() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_tokenKey);
+    return await prefs.remove(_tokenKey);
   }
 
   @override
-  Future<void> saveString(String key, String value) async {
+  Future<void> saveKeyValue<T>(String key, T value) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(key, value);
+    switch (T) {
+      case String:
+        await prefs.setString(key, value as String);
+        break;
+      case int:
+        await prefs.setInt(key, value as int);
+        break;
+      case bool:
+        await prefs.setBool(key, value as bool);
+        break;
+      case double:
+        await prefs.setDouble(key, value as double);
+        break;
+      case List<String>:
+        await prefs.setStringList(key, value as List<String>);
+        break;
+      default:
+        throw UnsupportedError('Tipo no soportado ${T.runtimeType}');
+    }
   }
 
   @override
-  Future<String?> getString(String key) async {
+  Future<T?> getKeyValue<T>(String key) async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(key);
+    switch (T) {
+      case String:
+        return prefs.getString(key) as T?;
+      case int:
+        return prefs.getInt(key) as T?;
+      case bool:
+        return prefs.getBool(key) as T?;
+      case double:
+        return prefs.getDouble(key) as T?;
+      case List<String>:
+        return prefs.getStringList(key) as T?;
+      default:
+        throw UnsupportedError('Tipo no soportado ${T.runtimeType}');
+    }
   }
 
   @override
-  Future<void> remove(String key) async {
+  Future<bool> removeKeyValue(String key) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(key);
+    return await prefs.remove(key);
   }
 }
