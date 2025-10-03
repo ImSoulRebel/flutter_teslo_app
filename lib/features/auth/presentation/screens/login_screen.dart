@@ -96,7 +96,9 @@ class _LoginForm extends ConsumerWidget {
               child: CustomFilledButton(
                 text: 'Ingresar',
                 buttonColor: Colors.black,
-                onPressed: ref.read(loginFormProvider.notifier).formSubmitted,
+                onPressed: loginForm.isPosting
+                    ? null
+                    : ref.read(loginFormProvider.notifier).formSubmitted,
               )),
           const Spacer(flex: 2),
           Row(

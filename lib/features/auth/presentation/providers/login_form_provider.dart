@@ -83,6 +83,7 @@ class LoginFormNotifier extends Notifier<LoginFormState> {
     );
 
     if (!state.isValid) return;
+    state = state.copyWith(isPosting: true);
 
     debugPrint('''
     Formulario enviado correctamente:
@@ -92,6 +93,8 @@ class LoginFormNotifier extends Notifier<LoginFormState> {
     ''');
 
     await loginCallback(state.email.value, state.password.value);
+
+    state = state.copyWith(isPosting: false);
   }
 
   void formPosted() {
