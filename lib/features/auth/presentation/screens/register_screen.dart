@@ -43,7 +43,7 @@ class RegisterScreen extends StatelessWidget {
             const SizedBox(height: 50),
 
             Container(
-              height: size.height - 200, // 80 los dos sizebox y 100 el ícono
+              height: size.height * 0.75, // 80 los dos sizebox y 100 el ícono
               width: double.infinity,
               decoration: BoxDecoration(
                 color: scaffoldBackgroundColor,
@@ -70,29 +70,29 @@ class _RegisterForm extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 50),
       child: Column(
         children: [
-          const SizedBox(height: 50),
+          const Spacer(flex: 2),
           Text('Nueva cuenta', style: textStyles.titleMedium),
-          const SizedBox(height: 50),
+          const Spacer(flex: 2),
           const CustomTextFormField(
             label: 'Nombre completo',
             keyboardType: TextInputType.emailAddress,
           ),
-          const SizedBox(height: 30),
+          const Spacer(),
           const CustomTextFormField(
             label: 'Correo',
             keyboardType: TextInputType.emailAddress,
           ),
-          const SizedBox(height: 30),
+          const Spacer(),
           const CustomTextFormField(
             label: 'Contraseña',
             obscureText: true,
           ),
-          const SizedBox(height: 30),
+          const Spacer(),
           const CustomTextFormField(
             label: 'Repita la contraseña',
             obscureText: true,
           ),
-          const SizedBox(height: 30),
+          const Spacer(),
           SizedBox(
               width: double.infinity,
               height: 60,
