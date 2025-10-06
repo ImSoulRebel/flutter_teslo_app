@@ -8,6 +8,7 @@ class ProductsUseCases {
     return ProductsUseCases(loadNextPage: LoadNextPageUsecase(repository));
   }
 
-  Future<List<ProductEntity>> loadNextPageExecute(int limit, int offset) =>
-      loadNextPage.execute(limit, offset);
+  Future<List<ProductEntity>> loadNextPageExecute(
+          int limit, int offset) async =>
+      await loadNextPage.execute(limit, offset);
 }

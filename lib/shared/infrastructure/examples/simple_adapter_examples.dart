@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:teslo_shop/shared/infrastructure/simple_adapters.dart';
 
 /// Ejemplo simple de uso del patrón adaptador con DIO
@@ -29,9 +30,9 @@ class ExampleService {
         (httpClient as DioAdapter).setAuthToken(token);
       }
 
-      print('Login exitoso');
+      debugPrint('Login exitoso');
     } catch (e) {
-      print('Error en login: $e');
+      debugPrint('Error en login: $e');
     }
   }
 
@@ -40,9 +41,9 @@ class ExampleService {
     try {
       // El token ya está configurado automáticamente
       final response = await httpClient.get('/protected-endpoint');
-      print('Datos obtenidos: $response');
+      debugPrint('Datos obtenidos: $response');
     } catch (e) {
-      print('Error obteniendo datos: $e');
+      debugPrint('Error obteniendo datos: $e');
     }
   }
 
@@ -57,9 +58,9 @@ class ExampleService {
         (httpClient as DioAdapter).removeAuthToken();
       }
 
-      print('Logout exitoso');
+      debugPrint('Logout exitoso');
     } catch (e) {
-      print('Error en logout: $e');
+      debugPrint('Error en logout: $e');
     }
   }
 }

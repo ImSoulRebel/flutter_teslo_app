@@ -35,11 +35,15 @@ class ProductsDatasourceImpl implements ProductsDatasource {
   @override
   Future<List<ProductEntity>> getProductsByPage(int limit, int offset) async {
     final response =
-        await dioAdapter.get('/api/products?limit=$limit&offset=$offset');
+        await dioAdapter.get('/products?limit=$limit&offset=$offset');
 
-    return (response.data as List)
+    final data = response as List;
+
+    final products =  (data)
         .map((item) => ProductsMapper.fromJsonToEntity(item))
         .toList();
+
+    return products;
   }
 
   @override

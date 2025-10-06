@@ -29,6 +29,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/products',
         builder: (context, state) => const ProductsScreen(),
       ),
+
+      GoRoute(
+        path: '/products/:id',
+        builder: (context, state) {
+          final productId = state.params['id'] ?? 'no-id';
+          return ProductDetailScreen(productId: productId);
+        },
+      ),
     ],
 
     ///! TODO: Bloquear si no se está autenticado de alguna manera
