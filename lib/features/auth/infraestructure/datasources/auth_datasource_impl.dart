@@ -15,7 +15,7 @@ class AuthDatasourceImpl extends AuthDatasource {
         'Authorization': 'Bearer $token',
       });
 
-      final user = UserMapper.userEntityFromMap(response);
+      final user = UserMapper.fromJsonToEntity(response);
       return user;
     } on WrongCredentials catch (e) {
       debugPrint('AuthDatasourceImpl checkAuthStatus error: ${e.toString()}');
@@ -39,7 +39,7 @@ class AuthDatasourceImpl extends AuthDatasource {
         'password': password,
       });
 
-      final user = UserMapper.userEntityFromMap(response);
+      final user = UserMapper.fromJsonToEntity(response);
       return user;
     } on WrongCredentials catch (e) {
       debugPrint('AuthDatasourceImpl login error: ${e.toString()}');

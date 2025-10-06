@@ -18,8 +18,7 @@ class DioAdapter implements HttpAdapter {
   }
 
   @override
-  Future<Map<String, dynamic>> get(String path,
-      {Map<String, String>? headers}) async {
+  Future<dynamic> get(String path, {Map<String, String>? headers}) async {
     try {
       final response = await _dio.get(
         path,
@@ -86,9 +85,10 @@ class DioAdapter implements HttpAdapter {
   }
 
   /// Maneja la respuesta de DIO
-  Map<String, dynamic> _handleResponse(Response response) {
+  dynamic _handleResponse(Response response) {
     if (response.statusCode! >= 200 && response.statusCode! < 300) {
-      return response.data as Map<String, dynamic>;
+      // Retornamos directamente la data, puede ser Map, List o cualquier tipo
+      return response.data;
     }
     throw Exception('Error HTTP: ${response.statusCode}');
   }
