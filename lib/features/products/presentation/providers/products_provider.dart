@@ -25,15 +25,14 @@ class ProductsState {
     bool? isLastPage,
     int? limit,
     int? offset,
-  }) {
-    return ProductsState(
-      isLoading: isLoading ?? this.isLoading,
-      products: products ?? this.products,
-      isLastPage: isLastPage ?? this.isLastPage,
-      limit: limit ?? this.limit,
-      offset: offset ?? this.offset,
-    );
-  }
+  }) =>
+      ProductsState(
+        isLoading: isLoading ?? this.isLoading,
+        products: products ?? this.products,
+        isLastPage: isLastPage ?? this.isLastPage,
+        limit: limit ?? this.limit,
+        offset: offset ?? this.offset,
+      );
 }
 
 class ProductsNotifier extends Notifier<ProductsState> {
@@ -82,8 +81,8 @@ class ProductsNotifier extends Notifier<ProductsState> {
     }
     // Evita cargar si ya está cargando o si llegó a la última página
   }
-  Future<void> _tic() => Future.delayed(const Duration(milliseconds: 500));
 
+  Future<void> _tic() => Future.delayed(const Duration(milliseconds: 500));
 }
 
 final productsProvider =

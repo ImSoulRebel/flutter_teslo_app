@@ -1,8 +1,9 @@
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:teslo_shop/config/config.dart';
-import 'package:teslo_shop/features/products/domain/datasources/datasources.dart';
-import 'package:teslo_shop/features/products/domain/entities/entities.dart';
-import 'package:teslo_shop/features/products/infraestructure/mappers/mappers.dart';
-import 'package:teslo_shop/shared/infrastructure/simple_adapters.dart';
+import 'package:teslo_shop/features/products/domain/domain.dart';
+import 'package:teslo_shop/features/products/infraestructure/insfraestructure.dart';
+import 'package:teslo_shop/features/shared/infrastructure/drivers/drivers.dart';
 
 class ProductsDatasourceImpl implements ProductsDatasource {
   late final DioAdapter dioAdapter;
@@ -27,9 +28,19 @@ class ProductsDatasourceImpl implements ProductsDatasource {
   }
 
   @override
-  Future<ProductEntity> getProductById(String id) {
-    // TODO: implement getProductById
-    throw UnimplementedError();
+  Future<ProductEntity> getProductById(String id) async {
+    try {
+      final response = await dioAdapter.get('/products/$id');
+      final product = ProductsMapper.fromJsonToEntity(response);
+      return product;
+    } on DioException catch (e) {
+      debugPrint("ProductsDatasourceImpl getProductById DioException: $e");
+      if (e.response?.statusCode == 404) throw ProductNotFound();
+      throw Exception();
+    } catch (e) {
+      debugPrint("ProductsDatasourceImpl getProductById error: $e");
+      throw Exception();
+    }
   }
 
   @override
@@ -39,9 +50,8 @@ class ProductsDatasourceImpl implements ProductsDatasource {
 
     final data = response as List;
 
-    final products =  (data)
-        .map((item) => ProductsMapper.fromJsonToEntity(item))
-        .toList();
+    final products =
+        (data).map((item) => ProductsMapper.fromJsonToEntity(item)).toList();
 
     return products;
   }

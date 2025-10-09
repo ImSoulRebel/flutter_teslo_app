@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:teslo_shop/shared/infrastructure/simple_adapters.dart';
+import 'package:teslo_shop/features/shared/infrastructure/drivers/drivers.dart';
 
 /// Ejemplo simple de uso del patrón adaptador con DIO
 class ExampleService {

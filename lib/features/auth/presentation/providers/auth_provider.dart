@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:teslo_shop/features/auth/domain/domain.dart';
 import 'package:teslo_shop/features/auth/infraestructure/errors/errors.dart';
-import 'package:teslo_shop/shared/infrastructure/simple_adapters.dart';
+import 'package:teslo_shop/features/shared/infrastructure/drivers/drivers.dart';
 
 import 'auth_usecases_provider.dart';
 

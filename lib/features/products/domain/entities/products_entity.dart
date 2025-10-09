@@ -26,4 +26,18 @@ class ProductEntity {
     required this.images,
     required this.user,
   });
+
+  factory ProductEntity.empty() => ProductEntity(
+        id: '',
+        title: '',
+        price: 0,
+        description: '',
+        slug: '',
+        stock: 0,
+        sizes: [],
+        gender: '',
+        tags: [],
+        images: [],
+        user: null,
+      );
 }

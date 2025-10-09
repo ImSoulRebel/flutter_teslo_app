@@ -3,7 +3,7 @@ import 'package:teslo_shop/config/config.dart';
 import 'package:teslo_shop/features/auth/domain/domain.dart';
 import 'package:teslo_shop/features/auth/infraestructure/errors/auth_errors.dart';
 import 'package:teslo_shop/features/auth/infraestructure/mappers/mappers.dart';
-import 'package:teslo_shop/shared/infrastructure/simple_adapters.dart';
+import 'package:teslo_shop/features/shared/infrastructure/drivers/drivers.dart';
 
 class AuthDatasourceImpl extends AuthDatasource {
   final httpAdapter = DioAdapter(baseUrl: Environment.apiUrl);
