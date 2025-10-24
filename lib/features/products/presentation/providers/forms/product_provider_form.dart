@@ -76,7 +76,7 @@ class ProductProviderFormNotifier extends Notifier<ProductProviderFormState> {
         ref.read(productsProvider.notifier).createOrUpdateProduct;
 
     return ProductProviderFormState(
-      id: product.id,
+      id: product.id ?? '',
       title: TitleInput.dirty(product.title),
       slug: SlugInput.dirty(product.slug),
       price: PriceInput.dirty(product.price),
@@ -117,8 +117,10 @@ class ProductProviderFormNotifier extends Notifier<ProductProviderFormState> {
             ))
         .toList();
 
+    final id = state.id.isNotEmpty && state.id != "new" ? state.id : null;
+
     final productLike = {
-      'id': state.id,
+      'id': id,
       'title': state.title.value,
       'slug': state.slug.value,
       'price': state.price.value,

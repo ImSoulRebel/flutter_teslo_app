@@ -20,18 +20,13 @@ class ProductsDatasourceImpl implements ProductsDatasource {
       Map<String, dynamic> productLike) async {
     try {
       final String? id = productLike['id'];
+      final data = Map<String, dynamic>.from(productLike)..remove('id');
 
-      if (id != null) {
-        productLike.removeWhere((key, value) => key == 'id');
+      final response = id != null
+          ? await dioAdapter.patch('/products/$id', data)
+          : await dioAdapter.post('/products', data);
 
-        final response = await dioAdapter.patch('/products/$id', productLike);
-        final product = ProductsMapper.fromJsonToEntity(response);
-        return product;
-      } else {
-        final response = await dioAdapter.post('/post', productLike);
-        final product = ProductsMapper.fromJsonToEntity(response);
-        return product;
-      }
+      return ProductsMapper.fromJsonToEntity(response);
     } catch (e) {
       debugPrint(e.toString());
       throw Exception();

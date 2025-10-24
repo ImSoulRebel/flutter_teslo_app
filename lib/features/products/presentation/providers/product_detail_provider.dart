@@ -43,7 +43,14 @@ class ProductDetailNotifier extends Notifier<ProductDetailState> {
 
   Future<void> loadProduct() async {
     await _tic();
+
     try {
+      if (state.id == "new") {
+        state =
+            state.copyWith(isLoading: false, product: ProductEntity.empty());
+        return;
+      }
+
       state = state.copyWith(isLoading: true);
 
       final product = await productsUseCases.getProductByIdExecute(state.id);

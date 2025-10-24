@@ -1,7 +1,7 @@
 import 'package:teslo_shop/features/auth/domain/domain.dart';
 
 class ProductEntity {
-  String id;
+  String? id;
   String title;
   double price;
   String description;
@@ -24,20 +24,19 @@ class ProductEntity {
     required this.gender,
     required this.tags,
     required this.images,
-    required this.user,
+    this.user,
   });
 
   factory ProductEntity.empty() => ProductEntity(
-        id: '',
+        id: null,
         title: '',
         price: 0,
         description: '',
         slug: '',
         stock: 0,
-        sizes: [],
-        gender: '',
+        sizes: ["S"],
+        gender: "men",
         tags: [],
         images: [],
-        user: null,
       );
 }
