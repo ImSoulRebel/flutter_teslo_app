@@ -27,37 +27,41 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       builder: (context, ref, _) {
         final productDetailState =
             ref.watch(productDetailProvider(widget.productId));
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('Editar Producto'),
-            actions: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.camera_alt_outlined),
-              )
-            ],
-          ),
-          body: productDetailState.isLoading
-              ? const Center(child: FullScreenLoader())
-              : _ProductView(product: productDetailState.product!),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              if (productDetailState.product == null) return;
+        return GestureDetector(
+          onTap: () => FocusScope.of(context)
+              .unfocus(), // Ocultar el teclado al tocar fuera
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text('Editar Producto'),
+              actions: [
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.camera_alt_outlined),
+                )
+              ],
+            ),
+            body: productDetailState.isLoading
+                ? const Center(child: FullScreenLoader())
+                : _ProductView(product: productDetailState.product!),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                if (productDetailState.product == null) return;
 
-              ref
-                  .read(
-                      productFormProvider(productDetailState.product!).notifier)
-                  .submitForm()
-                  .then((onValue) {
-                if (!mounted) return;
-                if (onValue) {
-                  showSnackbar('Producto guardado correctamente');
-                } else {
-                  showSnackbar('Error al guardar el producto');
-                }
-              });
-            },
-            child: const Icon(Icons.save_as_outlined),
+                ref
+                    .read(productFormProvider(productDetailState.product!)
+                        .notifier)
+                    .submitForm()
+                    .then((onValue) {
+                  if (!mounted) return;
+                  if (onValue) {
+                    showSnackbar('Producto guardado correctamente');
+                  } else {
+                    showSnackbar('Error al guardar el producto');
+                  }
+                });
+              },
+              child: const Icon(Icons.save_as_outlined),
+            ),
           ),
         );
       },
@@ -211,8 +215,10 @@ class _SizeSelector extends StatelessWidget {
             label: Text(size, style: const TextStyle(fontSize: 10)));
       }).toList(),
       selected: Set.from(selectedSizes),
-      onSelectionChanged: (newSelection) =>
-          onSizesChanged.call(List.from(newSelection)),
+      onSelectionChanged: (newSelection) {
+        onSizesChanged.call(List.from(newSelection));
+        FocusScope.of(context).unfocus(); // Ocultar el teclado al tocar fuera
+      },
       multiSelectionEnabled: true,
     );
   }
@@ -246,8 +252,10 @@ class _GenderSelector extends StatelessWidget {
               label: Text(size, style: const TextStyle(fontSize: 12)));
         }).toList(),
         selected: {selectedGender},
-        onSelectionChanged: (newSelection) =>
-            onGenderChanged.call(newSelection.first),
+        onSelectionChanged: (newSelection) {
+          onGenderChanged.call(newSelection.first);
+          FocusScope.of(context).unfocus(); // Ocultar el teclado al tocar fuera
+        },
       ),
     );
   }
