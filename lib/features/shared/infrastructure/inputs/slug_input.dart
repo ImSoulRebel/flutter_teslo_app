@@ -11,7 +11,7 @@ class SlugInput extends FormzInput<String, SlugInputError> {
   // Call super.dirty to represent a modified form input.
   const SlugInput.dirty(String value) : super.dirty(value);
 
-  static final RegExp _slugRegExp = RegExp(r'^[a-z0-9]+(?:-[a-z0-9]+)*$');
+  static final RegExp _slugRegExp = RegExp(r'^[a-z0-9]+(?:_[a-z0-9]+)*$');
 
   String? get errorMessage {
     if (isValid || isPure) return null;

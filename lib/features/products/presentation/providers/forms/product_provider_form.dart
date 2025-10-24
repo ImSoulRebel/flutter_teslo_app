@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
+import 'package:teslo_shop/config/constants/constants.dart';
 import 'package:teslo_shop/features/products/domain/entities/products_entity.dart';
 import 'package:teslo_shop/features/shared/infrastructure/infra/infrastructure.dart';
 
@@ -68,17 +69,62 @@ class ProductProviderFormNotifier extends Notifier<ProductProviderFormState> {
   });
 
   @override
-  ProductProviderFormState build() {
-    return ProductProviderFormState(
-      id: product.id,
-      title: TitleInput.dirty(product.title),
-      slug: SlugInput.dirty(product.slug),
-      price: PriceInput.dirty(product.price),
-      stock: StockInput.dirty(product.stock),
-      sizes: product.sizes,
-      description: product.description,
-      tags: product.tags.join(', '),
+  ProductProviderFormState build() => ProductProviderFormState(
+        id: product.id,
+        title: TitleInput.dirty(product.title),
+        slug: SlugInput.dirty(product.slug),
+        price: PriceInput.dirty(product.price),
+        stock: StockInput.dirty(product.stock),
+        sizes: product.sizes,
+        description: product.description,
+        images: product.images,
+        gender: product.gender,
+        tags: product.tags.join(', '),
+      );
+
+  void _formValidation() {
+    state = state.copyWith(
+      isValid: Formz.validate([
+        TitleInput.dirty(state.title.value),
+        SlugInput.dirty(state.slug.value),
+        PriceInput.dirty(state.price.value),
+        StockInput.dirty(state.stock.value),
+      ]),
     );
+  }
+
+  Future<bool> submitForm() async {
+    _formValidation();
+    if (!state.isValid) return false;
+    if (onSubmitCallback == null) return false;
+
+    final parsedTags = state.tags
+        .split(',')
+        .map((tag) => tag.trim())
+        .where((tag) => tag.isNotEmpty)
+        .toList();
+    final parsedImages = state.images
+        .map((img) => img.replaceAll(
+              '${Environment.apiUrl}/files/product/',
+              '',
+            ))
+        .toList();
+
+    final productLike = {
+      'id': state.id,
+      'title': state.title.value,
+      'slug': state.slug.value,
+      'price': state.price.value,
+      'sizes': state.sizes,
+      'description': state.description,
+      'gender': state.gender,
+      'stock': state.stock.value,
+      'tags': parsedTags,
+      'images': parsedImages,
+    };
+
+    // onSubmitCallback?.call(productLike);
+    return true;
   }
 
   void onChangeTitle(String value) {
@@ -153,3 +199,10 @@ class ProductProviderFormNotifier extends Notifier<ProductProviderFormState> {
     state = state.copyWith(images: images);
   }
 }
+
+final productFormProvider = NotifierProvider.autoDispose.family<
+        ProductProviderFormNotifier, ProductProviderFormState, ProductEntity>(
+    (product) => ProductProviderFormNotifier(
+          onSubmitCallback: null,
+          product: product,
+        ));
