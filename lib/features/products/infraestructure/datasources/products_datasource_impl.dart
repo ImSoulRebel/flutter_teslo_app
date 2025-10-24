@@ -16,9 +16,26 @@ class ProductsDatasourceImpl implements ProductsDatasource {
   }
 
   @override
-  Future<ProductEntity> createUpdateProduct(Map<String, dynamic> productLike) {
-    // TODO: implement createUpdateProduct
-    throw UnimplementedError();
+  Future<ProductEntity> createUpdateProduct(
+      Map<String, dynamic> productLike) async {
+    try {
+      final String? id = productLike['id'];
+
+      if (id != null) {
+        productLike.removeWhere((key, value) => key == 'id');
+
+        final response = await dioAdapter.patch('/products/$id', productLike);
+        final product = ProductsMapper.fromJsonToEntity(response);
+        return product;
+      } else {
+        final response = await dioAdapter.post('/post', productLike);
+        final product = ProductsMapper.fromJsonToEntity(response);
+        return product;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      throw Exception();
+    }
   }
 
   @override

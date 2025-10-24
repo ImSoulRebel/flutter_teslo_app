@@ -74,6 +74,21 @@ class DioAdapter implements HttpAdapter {
     }
   }
 
+  @override
+  Future<Map<String, dynamic>> patch(String path, Map<String, dynamic> data,
+      {Map<String, String>? headers}) async {
+    try {
+      final response = await _dio.patch(
+        path,
+        data: data,
+        options: Options(headers: headers),
+      );
+      return _handleResponse(response);
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   /// Agrega un token de autorización
   void setAuthToken(String token) {
     _dio.options.headers['Authorization'] = 'Bearer $token';

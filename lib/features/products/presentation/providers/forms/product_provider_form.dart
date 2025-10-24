@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
 import 'package:teslo_shop/config/constants/constants.dart';
 import 'package:teslo_shop/features/products/domain/entities/products_entity.dart';
+import 'package:teslo_shop/features/products/presentation/providers/providers.dart';
 import 'package:teslo_shop/features/shared/infrastructure/infra/infrastructure.dart';
 
 class ProductProviderFormState {
@@ -60,27 +62,32 @@ class ProductProviderFormState {
 }
 
 class ProductProviderFormNotifier extends Notifier<ProductProviderFormState> {
-  final void Function(Map<String, dynamic> productLike)? onSubmitCallback;
+  late Future<bool> Function(Map<String, dynamic> productLike)?
+      onSubmitCallback;
   late final ProductEntity product;
 
   ProductProviderFormNotifier({
-    this.onSubmitCallback,
     required this.product,
   });
 
   @override
-  ProductProviderFormState build() => ProductProviderFormState(
-        id: product.id,
-        title: TitleInput.dirty(product.title),
-        slug: SlugInput.dirty(product.slug),
-        price: PriceInput.dirty(product.price),
-        stock: StockInput.dirty(product.stock),
-        sizes: product.sizes,
-        description: product.description,
-        images: product.images,
-        gender: product.gender,
-        tags: product.tags.join(', '),
-      );
+  ProductProviderFormState build() {
+    onSubmitCallback =
+        ref.read(productsProvider.notifier).createOrUpdateProduct;
+
+    return ProductProviderFormState(
+      id: product.id,
+      title: TitleInput.dirty(product.title),
+      slug: SlugInput.dirty(product.slug),
+      price: PriceInput.dirty(product.price),
+      stock: StockInput.dirty(product.stock),
+      sizes: product.sizes,
+      description: product.description,
+      images: product.images,
+      gender: product.gender,
+      tags: product.tags.join(', '),
+    );
+  }
 
   void _formValidation() {
     state = state.copyWith(
@@ -123,8 +130,12 @@ class ProductProviderFormNotifier extends Notifier<ProductProviderFormState> {
       'images': parsedImages,
     };
 
-    // onSubmitCallback?.call(productLike);
-    return true;
+    try {
+      return await onSubmitCallback!(productLike);
+    } catch (e) {
+      debugPrint(e.toString());
+      return false;
+    }
   }
 
   void onChangeTitle(String value) {
@@ -203,6 +214,5 @@ class ProductProviderFormNotifier extends Notifier<ProductProviderFormState> {
 final productFormProvider = NotifierProvider.autoDispose.family<
         ProductProviderFormNotifier, ProductProviderFormState, ProductEntity>(
     (product) => ProductProviderFormNotifier(
-          onSubmitCallback: null,
           product: product,
         ));

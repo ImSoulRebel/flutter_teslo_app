@@ -45,6 +45,27 @@ class ProductsNotifier extends Notifier<ProductsState> {
     return ProductsState();
   }
 
+  Future<bool> createOrUpdateProduct(Map<String, dynamic> productLike) async {
+    try {
+      final product =
+          await productsUseCases.updateOrCreateProductExecute(productLike);
+      final index =
+          state.products.indexWhere((element) => element.id == product.id);
+
+      if (index != -1) {
+        final updatedProducts = [...state.products];
+        updatedProducts[index] = product;
+        state = state.copyWith(products: updatedProducts);
+      } else {
+        state = state.copyWith(products: [...state.products, product]);
+      }
+      return true;
+    } catch (e) {
+      debugPrint(e.toString());
+      return false;
+    }
+  }
+
   Future<void> loadNextPage() async {
     await _tic();
     try {

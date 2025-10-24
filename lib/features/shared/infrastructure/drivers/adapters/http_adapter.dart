@@ -7,4 +7,6 @@ abstract class HttpAdapter {
       {Map<String, String>? headers});
   Future<Map<String, dynamic>> delete(String path,
       {Map<String, String>? headers});
+  Future<Map<String, dynamic>> patch(String path, Map<String, dynamic> data,
+      {Map<String, String>? headers});
 }

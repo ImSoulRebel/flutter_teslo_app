@@ -44,7 +44,6 @@ class ProductDetailNotifier extends Notifier<ProductDetailState> {
   Future<void> loadProduct() async {
     await _tic();
     try {
-
       state = state.copyWith(isLoading: true);
 
       final product = await productsUseCases.getProductByIdExecute(state.id);
@@ -60,7 +59,8 @@ class ProductDetailNotifier extends Notifier<ProductDetailState> {
     try {
       state = state.copyWith(isSaving: true);
 
-      final product = await productsUseCases.updateProductExecute(productLike);
+      final product =
+          await productsUseCases.updateOrCreateProductExecute(productLike);
 
       state = state.copyWith(isSaving: false, product: product);
     } catch (e) {

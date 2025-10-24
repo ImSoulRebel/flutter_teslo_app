@@ -25,7 +25,7 @@ class ProductsUseCases {
   Future<ProductEntity?> getProductByIdExecute(String id) async =>
       await getProductById.execute(id);
 
-  Future<ProductEntity> updateProductExecute(
+  Future<ProductEntity> updateOrCreateProductExecute(
           Map<String, dynamic> productLike) async =>
       await updateProduct.execute(productLike);
 }
