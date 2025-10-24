@@ -4,31 +4,63 @@ import 'package:teslo_shop/features/products/domain/domain.dart';
 import 'package:teslo_shop/features/products/presentation/providers/providers.dart';
 import 'package:teslo_shop/features/shared/presentation/widgets/widgets.dart';
 
-class ProductDetailScreen extends ConsumerWidget {
+class ProductDetailScreen extends StatefulWidget {
   final String productId;
   const ProductDetailScreen({super.key, required this.productId});
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final productDetailState = ref.watch(productDetailProvider(productId));
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Editar Producto'),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.camera_alt_outlined),
-          )
-        ],
-      ),
-      body: productDetailState.isLoading
-          ? const Center(child: FullScreenLoader())
-          : _ProductView(product: productDetailState.product!),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => ref
-            .read(productFormProvider(productDetailState.product!).notifier)
-            .submitForm(),
-        child: const Icon(Icons.save_as_outlined),
-      ),
+  State<ProductDetailScreen> createState() => _ProductDetailScreenState();
+}
+
+class _ProductDetailScreenState extends State<ProductDetailScreen> {
+  void showSnackbar(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer(
+      builder: (context, ref, _) {
+        final productDetailState =
+            ref.watch(productDetailProvider(widget.productId));
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Editar Producto'),
+            actions: [
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.camera_alt_outlined),
+              )
+            ],
+          ),
+          body: productDetailState.isLoading
+              ? const Center(child: FullScreenLoader())
+              : _ProductView(product: productDetailState.product!),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              if (productDetailState.product == null) return;
+
+              ref
+                  .read(
+                      productFormProvider(productDetailState.product!).notifier)
+                  .submitForm()
+                  .then((onValue) {
+                if (!mounted) return;
+                if (onValue) {
+                  showSnackbar('Producto guardado correctamente');
+                } else {
+                  showSnackbar('Error al guardar el producto');
+                }
+              });
+            },
+            child: const Icon(Icons.save_as_outlined),
+          ),
+        );
+      },
     );
   }
 }
