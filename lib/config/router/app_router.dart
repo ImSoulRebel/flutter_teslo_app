@@ -6,11 +6,14 @@ import 'package:teslo_shop/features/auth/presentation/providers/providers.dart';
 import 'package:teslo_shop/features/products/products.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
+  final AuthStatus status = ref.watch(authProvider).status;
+  final goRouterNotifier = ref.read(goRouterNotifierProvider);
+
   return GoRouter(
-    refreshListenable: ref.read(goRouterNotifierProvider),
+    refreshListenable: goRouterNotifier,
     initialLocation: '/check-auth-status',
     routes: [
-      ///* Auth Routes
+      // Auth routes
       GoRoute(
         path: '/check-auth-status',
         builder: (context, state) => const CheckAuthStatusScreen(),
@@ -24,33 +27,42 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const RegisterScreen(),
       ),
 
-      ///* Product Routes
+      // Product routes
       GoRoute(
         path: '/products',
         builder: (context, state) => const ProductsScreen(),
       ),
-
       GoRoute(
         path: '/products/:id',
         builder: (context, state) {
-          final productId = state.params['id'] ?? 'no-id';
+          final String productId = state.params['id'] ?? 'no-id';
           return ProductDetailScreen(productId: productId);
         },
       ),
     ],
-
-    ///! TODO: Bloquear si no se está autenticado de alguna manera
-    ///
+    // Redirección centralizada según estado de autenticación
     redirect: (_, state) {
-      final currentStatus = ref.read(authProvider).status;
+      // Mientras se verifica el estado, mostrar pantalla de carga
+      if (status == AuthStatus.checking) {
+        return state.subloc == '/check-auth-status'
+            ? null
+            : '/check-auth-status';
+      }
 
-      final isLoggedIn = currentStatus == AuthStatus.authenticated;
+      // Si no está autenticado, redirigir a login (excepto si ya está en login o register)
+      if (status == AuthStatus.notAuthenticated) {
+        final isAuthRoute =
+            state.subloc == '/login' || state.subloc == '/register';
+        return isAuthRoute ? null : '/login';
+      }
 
-      final loggingIn = state.subloc == '/login' || state.subloc == '/register';
-
-      if (!isLoggedIn) return loggingIn ? null : '/login';
-
-      if (loggingIn) return '/products';
+      // Si está autenticado y está en login/register, redirigir a productos
+      if (status == AuthStatus.authenticated) {
+        final isAuthRoute = state.subloc == '/login' ||
+            state.subloc == '/register' ||
+            state.subloc == '/check-auth-status';
+        return isAuthRoute ? '/products' : null;
+      }
 
       return null;
     },
