@@ -330,6 +330,12 @@ class _ImageGallery extends StatelessWidget {
               placeholder: const AssetImage('assets/loaders/bottle-loader.gif'),
               image: imageProvider,
               fit: BoxFit.cover,
+              imageErrorBuilder: (context, error, stackTrace) {
+                return Image.asset(
+                  'assets/images/no-image.jpg',
+                  fit: BoxFit.cover,
+                );
+              },
             ),
           ),
         );
