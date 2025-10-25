@@ -31,7 +31,7 @@ class HttpAdapterImpl implements HttpAdapter {
   }
 
   @override
-  Future<Map<String, dynamic>> post(String path, Map<String, dynamic> data,
+  Future<Map<String, dynamic>> post(String path, Object data,
       {Map<String, String>? headers}) async {
     try {
       final response = await _dio.post(

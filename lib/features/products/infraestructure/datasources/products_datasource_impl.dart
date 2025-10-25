@@ -15,12 +15,52 @@ class ProductsDatasourceImpl implements ProductsDatasource {
     )..setAuthToken(accesToken);
   }
 
+  Future<String> _uploadImage(String path) async {
+    try {
+      final fileName = path.split('/').last;
+
+      final formData = FormData.fromMap({
+        'file': MultipartFile.fromFileSync(path, filename: fileName),
+      });
+
+      final response = await dioAdapter.post('/files/product', formData);
+      final image = response['image'] as String;
+      return image;
+    } catch (e) {
+      debugPrint('Error uploading image: $e');
+      throw Exception('Image upload failed');
+    }
+  }
+
+  Future<List<String>> _uploadImages(List<String> paths) async {
+    final photosToUpload = paths.where((path) => path.contains('/')).toList();
+    final photosToIgnore = paths.where((path) => !path.contains('/')).toList();
+    if (photosToUpload.isEmpty) return photosToIgnore;
+
+    final uploadedImages = await Future.wait(photosToUpload.map(_uploadImage));
+
+    
+    return [...photosToIgnore, ...uploadedImages];
+  }
+
   @override
   Future<ProductEntity> createUpdateProduct(
       Map<String, dynamic> productLike) async {
     try {
       final String? id = productLike['id'];
       final data = Map<String, dynamic>.from(productLike)..remove('id');
+
+      if (data.containsKey('images')) {
+        final List<String> paths =
+            (data['images'] as List).whereType<String>().toList();
+
+        if (paths.isNotEmpty) {
+          final uploadedImages = await _uploadImages(paths);
+          data['images'] = uploadedImages;
+        } else {
+          data['images'] = [];
+        }
+      }
 
       final response = id != null
           ? await dioAdapter.patch('/products/$id', data)

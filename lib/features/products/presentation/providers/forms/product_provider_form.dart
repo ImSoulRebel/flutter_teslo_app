@@ -209,7 +209,7 @@ class ProductProviderFormNotifier extends Notifier<ProductProviderFormState> {
   }
 
   void onChangeImages(List<String> images) {
-    state = state.copyWith(images: images);
+    state = state.copyWith(images: [...state.images, ...images]);
   }
 }
 
