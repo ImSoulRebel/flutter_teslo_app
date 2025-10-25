@@ -30,9 +30,32 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       builder: (context, ref, _) {
         final productDetailState =
             ref.watch(productDetailProvider(widget.productId));
+
+        // Si está cargando, muestra loader
+        if (productDetailState.isLoading) {
+          return const Scaffold(
+            body: Center(child: FullScreenLoader()),
+          );
+        }
+
+        // Si el producto es null, muestra mensaje de error
+        if (productDetailState.product == null) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Editar Producto')),
+            body: const Center(
+              child: Text(
+                'No se pudo cargar el producto. Verifica tu conexión o intenta nuevamente.',
+                style: TextStyle(color: Colors.red, fontSize: 16),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+        }
+
+        // Producto cargado correctamente
+        final product = productDetailState.product!;
         return GestureDetector(
-          onTap: () => FocusScope.of(context)
-              .unfocus(), // Ocultar el teclado al tocar fuera
+          onTap: () => FocusScope.of(context).unfocus(),
           child: Scaffold(
             appBar: AppBar(
               title: const Text('Editar Producto'),
@@ -43,8 +66,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         await CameraGalleryAdapterImpl().selectPhoto();
                     if (photoPath == null) return;
                     ref
-                        .read(productFormProvider(productDetailState.product!)
-                            .notifier)
+                        .read(productFormProvider(product).notifier)
                         .onChangeImages([photoPath]);
                   },
                   icon: const Icon(Icons.photo_library_outlined),
@@ -55,24 +77,18 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         await CameraGalleryAdapterImpl().takePhoto();
                     if (photoPath == null) return;
                     ref
-                        .read(productFormProvider(productDetailState.product!)
-                            .notifier)
+                        .read(productFormProvider(product).notifier)
                         .onChangeImages([photoPath]);
                   },
                   icon: const Icon(Icons.camera_alt_outlined),
                 ),
               ],
             ),
-            body: productDetailState.isLoading
-                ? const Center(child: FullScreenLoader())
-                : _ProductView(product: productDetailState.product!),
+            body: _ProductView(product: product),
             floatingActionButton: FloatingActionButton(
               onPressed: () {
-                if (productDetailState.product == null) return;
-
                 ref
-                    .read(productFormProvider(productDetailState.product!)
-                        .notifier)
+                    .read(productFormProvider(product).notifier)
                     .submitForm()
                     .then((onValue) {
                   if (!mounted) return;
