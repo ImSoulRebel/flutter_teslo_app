@@ -1,2 +1,3 @@
-export 'dio_adapter.dart';
-export 'shared_preferences_storage_adapter.dart';
+export 'http_adapter_impl.dart';
+export 'storage_adapter_impl.dart';
+export 'camera_gallery_adapter_impl.dart';

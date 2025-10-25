@@ -33,7 +33,7 @@ class AuthState {
 
 class AuthNotifier extends Notifier<AuthState> {
   late AuthUseCases authUseCases;
-  final StorageAdapter storageAdapter = SharedPreferencesStorageAdapter();
+  final StorageAdapter storageAdapter = StorageAdapterImpl();
 
   @override
   AuthState build() {

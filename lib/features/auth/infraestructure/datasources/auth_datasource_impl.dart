@@ -6,7 +6,7 @@ import 'package:teslo_shop/features/auth/infraestructure/mappers/mappers.dart';
 import 'package:teslo_shop/features/shared/infrastructure/drivers/drivers.dart';
 
 class AuthDatasourceImpl extends AuthDatasource {
-  final httpAdapter = DioAdapter(baseUrl: Environment.apiUrl);
+  final httpAdapter = HttpAdapterImpl(baseUrl: Environment.apiUrl);
 
   @override
   Future<UserEntity> checkAuthStatus(String token) async {

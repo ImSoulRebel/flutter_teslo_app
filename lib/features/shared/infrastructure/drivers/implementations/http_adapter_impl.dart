@@ -3,10 +3,10 @@ import 'package:teslo_shop/features/auth/infraestructure/errors/errors.dart';
 import '../adapters/http_adapter.dart';
 
 /// Implementación simple del adaptador HTTP usando DIO
-class DioAdapter implements HttpAdapter {
+class HttpAdapterImpl implements HttpAdapter {
   final Dio _dio;
 
-  DioAdapter({String? baseUrl}) : _dio = Dio() {
+  HttpAdapterImpl({String? baseUrl}) : _dio = Dio() {
     if (baseUrl != null) {
       _dio.options.baseUrl = baseUrl;
     }

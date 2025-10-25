@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:teslo_shop/features/products/domain/domain.dart';
 import 'package:teslo_shop/features/products/presentation/providers/providers.dart';
 import 'package:teslo_shop/features/shared/presentation/widgets/widgets.dart';
+import 'package:teslo_shop/features/shared/shared.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final String productId;
@@ -35,9 +36,23 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               title: const Text('Editar Producto'),
               actions: [
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    final photoPath =
+                        await CameraGalleryAdapterImpl().selectPhoto();
+                    if (photoPath == null) return;
+                    debugPrint('Selected photo path: $photoPath');
+                  },
+                  icon: const Icon(Icons.photo_library_outlined),
+                ),
+                IconButton(
+                  onPressed: () async {
+                    final photoPath =
+                        await CameraGalleryAdapterImpl().takePhoto();
+                    if (photoPath == null) return;
+                    debugPrint('Taken photo path: $photoPath');
+                  },
                   icon: const Icon(Icons.camera_alt_outlined),
-                )
+                ),
               ],
             ),
             body: productDetailState.isLoading

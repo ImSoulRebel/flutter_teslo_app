@@ -7,8 +7,8 @@ class ExampleService {
   final StorageAdapter storage;
 
   ExampleService()
-      : httpClient = DioAdapter(baseUrl: 'https://api.example.com'),
-        storage = SharedPreferencesStorageAdapter();
+      : httpClient = HttpAdapterImpl(baseUrl: 'https://api.example.com'),
+        storage = StorageAdapterImpl();
 
   /// Ejemplo de login
   Future<void> loginExample() async {
@@ -26,8 +26,8 @@ class ExampleService {
       await storage.saveToken(token);
 
       // Configurar token para futuras peticiones
-      if (httpClient is DioAdapter) {
-        (httpClient as DioAdapter).setAuthToken(token);
+      if (httpClient is HttpAdapterImpl) {
+        (httpClient as HttpAdapterImpl).setAuthToken(token);
       }
 
       debugPrint('Login exitoso');
@@ -54,8 +54,8 @@ class ExampleService {
       await storage.removeToken();
 
       // Remover token del cliente HTTP
-      if (httpClient is DioAdapter) {
-        (httpClient as DioAdapter).removeAuthToken();
+      if (httpClient is HttpAdapterImpl) {
+        (httpClient as HttpAdapterImpl).removeAuthToken();
       }
 
       debugPrint('Logout exitoso');
@@ -69,16 +69,16 @@ class ExampleService {
 class AdapterFactory {
   /// Crea un cliente HTTP configurado para la API de Teslo
   static HttpAdapter createTesloHttpClient() {
-    return DioAdapter(baseUrl: 'https://teslo-api.herokuapp.com/api');
+    return HttpAdapterImpl(baseUrl: 'https://teslo-api.herokuapp.com/api');
   }
 
   /// Crea un cliente HTTP configurado para otra API
   static HttpAdapter createCustomHttpClient(String baseUrl) {
-    return DioAdapter(baseUrl: baseUrl);
+    return HttpAdapterImpl(baseUrl: baseUrl);
   }
 
   /// Crea un adaptador de almacenamiento
   static StorageAdapter createStorageAdapter() {
-    return SharedPreferencesStorageAdapter();
+    return StorageAdapterImpl();
   }
 }

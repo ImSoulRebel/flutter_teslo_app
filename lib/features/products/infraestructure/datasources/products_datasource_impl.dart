@@ -6,11 +6,11 @@ import 'package:teslo_shop/features/products/infraestructure/insfraestructure.da
 import 'package:teslo_shop/features/shared/infrastructure/drivers/drivers.dart';
 
 class ProductsDatasourceImpl implements ProductsDatasource {
-  late final DioAdapter dioAdapter;
+  late final HttpAdapterImpl dioAdapter;
   final String accesToken;
 
   ProductsDatasourceImpl({required this.accesToken}) {
-    dioAdapter = DioAdapter(
+    dioAdapter = HttpAdapterImpl(
       baseUrl: Environment.apiUrl,
     )..setAuthToken(accesToken);
   }

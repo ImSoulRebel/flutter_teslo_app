@@ -2,7 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../adapters/storage_adapter.dart';
 
 /// Implementación simple del adaptador de almacenamiento usando SharedPreferences
-class SharedPreferencesStorageAdapter implements StorageAdapter {
+class StorageAdapterImpl implements StorageAdapter {
   static const String _tokenKey = 'auth_token';
 
   @override
