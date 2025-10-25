@@ -39,7 +39,6 @@ class ProductsDatasourceImpl implements ProductsDatasource {
 
     final uploadedImages = await Future.wait(photosToUpload.map(_uploadImage));
 
-    
     return [...photosToIgnore, ...uploadedImages];
   }
 

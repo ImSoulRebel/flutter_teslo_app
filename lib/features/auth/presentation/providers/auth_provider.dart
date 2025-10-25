@@ -108,10 +108,6 @@ final authProvider = NotifierProvider<AuthNotifier, AuthState>(() {
   return AuthNotifier();
 });
 
-
-
-
-
 // class AuthNotifier extends Notifier<AuthState> {
 //   late AuthUseCases authUseCases;
 
@@ -121,13 +117,13 @@ final authProvider = NotifierProvider<AuthNotifier, AuthState>(() {
 //     return AuthState();
 //   }
 
-  /// Realiza el login del usuario
+/// Realiza el login del usuario
 //   Future<void> login(String email, String password) async {
 //     try {
 //       state = state.copyWith(status: AuthStatus.checking, errorMessage: '');
-      
+
 //       final user = await authUseCases.login(email, password);
-      
+
 //       state = state.copyWith(
 //         user: user,
 //         status: AuthStatus.authenticated,
@@ -146,9 +142,9 @@ final authProvider = NotifierProvider<AuthNotifier, AuthState>(() {
 //   Future<void> register(String fullName, String email, String password) async {
 //     try {
 //       state = state.copyWith(status: AuthStatus.checking, errorMessage: '');
-      
+
 //       final user = await authUseCases.register(fullName, email, password);
-      
+
 //       state = state.copyWith(
 //         user: user,
 //         status: AuthStatus.authenticated,
@@ -167,9 +163,9 @@ final authProvider = NotifierProvider<AuthNotifier, AuthState>(() {
 //   Future<void> checkAuthStatus(String token) async {
 //     try {
 //       state = state.copyWith(status: AuthStatus.checking, errorMessage: '');
-      
+
 //       final user = await authUseCases.checkAuthStatus(token);
-      
+
 //       state = state.copyWith(
 //         user: user,
 //         status: AuthStatus.authenticated,
@@ -188,7 +184,7 @@ final authProvider = NotifierProvider<AuthNotifier, AuthState>(() {
 //   Future<void> logout() async {
 //     try {
 //       await authUseCases.logout();
-      
+
 //       state = state.copyWith(
 //         user: null,
 //         status: AuthStatus.notAuthenticated,
