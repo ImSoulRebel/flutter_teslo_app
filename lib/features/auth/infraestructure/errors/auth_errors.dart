@@ -31,3 +31,15 @@ Connection timeout Exception:
 code: $errorCode
 message: $message''';
 }
+
+class RegistrationError implements Exception {
+  final String message;
+  final int? errorCode;
+  RegistrationError(
+      {this.errorCode = 400, this.message = 'Registration error'});
+  @override
+  String toString() => '''
+Registration error Exception:
+code: $errorCode
+message: $message''';
+}

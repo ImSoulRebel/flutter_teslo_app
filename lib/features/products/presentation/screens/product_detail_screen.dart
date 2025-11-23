@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:teslo_shop/features/products/domain/domain.dart';
 import 'package:teslo_shop/features/products/presentation/providers/providers.dart';
-import 'package:teslo_shop/features/shared/presentation/widgets/widgets.dart';
 import 'package:teslo_shop/features/shared/shared.dart';
 
 class ProductDetailScreen extends StatefulWidget {

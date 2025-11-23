@@ -59,12 +59,23 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   Future<void> register(String username, String password, String email) async {
-    final user = await authUseCases.register(
-      username,
-      password,
-      email,
-    );
-    _setLoggedUser(user);
+    await _tic();
+
+    try {
+      final user = await authUseCases.register(
+        username,
+        password,
+        email,
+      );
+      _setLoggedUser(user);
+    } on RegistrationError catch (e) {
+      logout(e.message);
+    } on ConnectionTimeout catch (e) {
+      logout(e.message);
+    } catch (e) {
+      debugPrint("Register: ${e.toString()}");
+      logout("Error inesperado durante el registro");
+    }
   }
 
   Future<void> checkStatus() async {

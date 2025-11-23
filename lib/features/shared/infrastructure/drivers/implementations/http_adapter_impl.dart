@@ -147,6 +147,14 @@ class HttpAdapterImpl implements HttpAdapter {
         );
       }
 
+      // Manejar errores 400 (Bad Request) como errores de registro
+      if (statusCode == 400) {
+        return RegistrationError(
+          errorCode: statusCode,
+          message: message ?? 'Error en el registro',
+        );
+      }
+
       // Para otros códigos de estado, usar el mensaje del servidor si está disponible
       return Exception(
           message ?? error.response?.statusMessage ?? 'Error del servidor');

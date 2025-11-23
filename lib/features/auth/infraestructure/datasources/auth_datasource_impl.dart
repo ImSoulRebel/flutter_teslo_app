@@ -56,8 +56,28 @@ class AuthDatasourceImpl extends AuthDatasource {
   }
 
   @override
-  Future<UserEntity> register(String username, String password, String email) {
-    // TODO: implement register
-    throw UnimplementedError();
+  Future<UserEntity> register(
+      String username, String password, String email) async {
+    try {
+      final response = await httpAdapter.post('/auth/register', {
+        'email': email,
+        'password': password,
+        'fullName': username,
+      });
+
+      final user = UserMapper.fromJsonToEntity(response);
+      return user;
+    } on RegistrationError catch (e) {
+      debugPrint('AuthDatasourceImpl register error: ${e.toString()}');
+      // Si ya es una RegistrationError (del HttpAdapter), la re-lanzamos
+      rethrow;
+    } on ConnectionTimeout catch (e) {
+      debugPrint('AuthDatasourceImpl register error: ${e.toString()}');
+      rethrow;
+    } catch (e) {
+      debugPrint('AuthDatasourceImpl register error: ${e.toString()}');
+      // Para otros errores, los envolvemos en RegistrationError
+      throw RegistrationError(message: 'Error en el registro');
+    }
   }
 }
